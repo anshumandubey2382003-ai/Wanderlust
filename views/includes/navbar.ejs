@@ -1,90 +1,108 @@
 <style>
-.search-btn{
-  background-color: #fe424d;
-  color: #fff;
-  border-radius: 25px;
-  padding: 0 1rem;
+/* SEARCH BAR */
+.search-box{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 0.35rem 0.35rem 0.35rem 1.3rem;
+  border: 1px solid var(--border);
+  border-radius: 3rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s, border-color 0.2s;
 }
-.search-btn:hover{
-  background-color: #fe424d;
-  color: #fff;
+.search-box:hover{
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 6px 16px rgba(0, 0, 0, 0.1);
 }
-.search-btn i{
-  margin-right: 0.5rem;
+.search-box:focus-within{
+  border-color: var(--text);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+.search-box i.fa-location-dot{
+  color: var(--muted);
+  margin-right: 0.7rem;
 }
 .search-inp{
-  border-radius: 25px;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.search-inp::placeholder{
+  color: var(--muted);
+  font-weight: 400;
+}
+.search-btn{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+  border: none;
+  border-radius: 3rem;
+  padding: 0.6rem 1.1rem;
+  background-color: var(--brand);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+.search-btn:hover{
+  background-color: var(--brand-dark);
 }
 
-/* ✅ MOBILE + TABLET FIX */
-@media (max-width: 768px) {
-  .navbar-collapse {
-    text-align: center;
+/* TABLET: sirf icon dikhao */
+@media (min-width: 768px) and (max-width: 991px) {
+  .search-btn span{
+    display: none;
   }
-
-  .navbar-nav {
-    width: 100%;
-  }
-
-  .navbar-nav .nav-link {
-    padding: 0.7rem 0;
-  }
-
-  form.d-flex {
-    flex-direction: column;
-    gap: 0.6rem;
-    width: 100%;
-    margin: 0.7rem 0;
-  }
-
-  .search-inp,
-  .search-btn {
-    width: 100%;
-  }
-
-  .navbar-nav.ms-auto {
-    margin-left: 0 !important;
+  .search-btn{
+    padding: 0.7rem;
   }
 }
-@media (max-width: 768px) {
+
+/* MOBILE: collapse menu */
+@media (max-width: 767px) {
   .navbar-collapse {
     background: #fff;
     padding: 1rem 0;
+    text-align: center;
   }
 
   .navbar-nav {
-    display: flex;
-    flex-direction: column;
+    width: 100%;
     align-items: center;
   }
 
-  form.d-flex {
-    order: 2;
-    width: 100%;
-    padding: 0 1rem;
-  }
-
-  .navbar-nav.ms-auto {
-    order: 3;
-    width: 100%;
+  .search-box {
+    max-width: 100%;
+    margin: 0.8rem 0;
   }
 
   .navbar-nav .nav-link {
     width: 100%;
-    text-align: center;
-    padding: 0.6rem 0;
+    padding: 0.6rem 0 !important;
+  }
+
+  .nav-btn {
+    margin-left: 0;
   }
 }
 </style>
 <nav class="navbar navbar-expand-md  bg-body-light border-bottom sticky-top">
    <div class="container-fluid">
     <a class="navbar-brand" href="/listings">
-      <i class="fa-regular fa-compass"></i></a>
+      <i class="fa-regular fa-compass"></i>
+      <span class="brand-name">Wanderlust</span></a>
 
     <button class="navbar-toggler"
-     type="button" 
+     type="button"
      data-bs-toggle="collapse"
      data-bs-target="#navbarNavAltMarkup">
      <span class="navbar-toggler-icon"></span>
@@ -95,28 +113,28 @@
           <a class="nav-link" href="/listings">Explore</a>
         </div>
 
- 
-    <form action="/listings" method="GET" class="d-flex" role="search">
-    <input 
-    class="form-control me-2 search-inp"
-    type="text"
-    name="search"
-    placeholder="Search destinations"
-    aria-label="Search"
-    value="<%= search ? search : `` %>">
-    <button class="btn search-btn" type="submit">
-      <i class="fa-solid fa-magnifying-glass"></i>Search
-    </button>
-  </form>
+    <form action="/listings" method="GET" class="search-box" role="search">
+      <i class="fa-solid fa-location-dot"></i>
+      <input
+      class="search-inp"
+      type="text"
+      name="search"
+      placeholder="Search destinations"
+      aria-label="Search"
+      value="<%= search ? search : `` %>">
+      <button class="search-btn" type="submit">
+        <i class="fa-solid fa-magnifying-glass"></i><span>Search</span>
+      </button>
+    </form>
 
-       <div class="navbar-nav ms-auto"> 
-        <a class="nav-link "href="/listings/new"> Add New Listing</a>
+       <div class="navbar-nav">
+        <a class="nav-link" href="/listings/new">List your home</a>
          <% if(!currUser){ %>
-          <a class="nav-link" href="/signup">Signup</a>
           <a class="nav-link" href="/login">Login</a>
+          <a class="nav-link nav-btn" href="/signup">Sign up</a>
           <%}%>
           <% if(currUser){ %>
-          <a class="nav-link "href="/logout"> Logout</a>
+          <a class="nav-link" href="/logout">Logout</a>
           <%}%>
         </div>
     </div>

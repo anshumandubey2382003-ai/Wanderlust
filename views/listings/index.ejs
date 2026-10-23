@@ -1,12 +1,12 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-    <h3>All Listings</h3>
     <style>
-  #filters {
+#filters {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding: 1rem 0;
+  gap: 2rem;
+  padding: 1rem 0 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
   overflow-x: auto;        /* mobile scroll */
   scrollbar-width: none;  /* firefox */
 }
@@ -18,111 +18,91 @@
 .filter {
   min-width: 70px;
   text-align: center;
-  opacity: 0.7;
+  opacity: 0.6;
   flex-shrink: 0;          /* important for scroll */
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid transparent;
+  transition: opacity 0.2s, border-color 0.2s;
 }
 
 .filter:hover {
   opacity: 1;
   cursor: pointer;
+  border-bottom-color: var(--border);
 }
 
 .filter i {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
 }
 
 .filter p {
   font-size: 0.75rem;
-  margin-top: 0.3rem;
+  font-weight: 600;
+  margin: 0.4rem 0 0;
 }
 
 /* TAX TOGGLE */
 .tax-toggle {
   flex-shrink: 0;
-  border: 1px solid #ccc;
-  border-radius: 1rem;
-  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  padding: 0.7rem 1rem;
   display: flex;
   align-items: center;
   margin-left: auto;   /* push to right */
-}
-
-/* CARD FIX FOR MOBILE */
-.listing-card img {
-  height: 16rem !important;
-  object-fit: cover;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 
 /* MOBILE ONLY */
 @media (max-width: 600px) {
-  h3 {
-    font-size: 1.3rem;
-  }
-
   .tax-toggle {
     margin-left: 0;
   }
-}
-/* LISTING GRID FIX */
-.row {
-  margin: 0;
-}
 
-/* CARD BASE */
-.listing-card {
-  border-radius: 1rem;
-  overflow: hidden;
-  border: none;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-}
-
-/* IMAGE FIX */
-.listing-card img {
-  width: 100%;
-  height: 15rem;
-  object-fit: cover;
-}
-
-/* TEXT AREA */
-.listing-card .card-body {
-  padding: 0.8rem 0.9rem;
-}
-
-.listing-card .card-text {
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-/* REMOVE BLUE LINK STYLE */
-.listing-link {
-  text-decoration: none;
-  color: inherit;
-}
-
-/* MOBILE ONLY */
-@media (max-width: 600px) {
-  .row-cols-sm-1 > * {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
+  /* 2 cards per row: chhote cards */
   .listing-card {
-    border-radius: 0.8rem;
+    margin-bottom: 0.5rem;
   }
 
-  .listing-card img {
-    height: 14rem;
+  .listing-card .img-wrap {
+    border-radius: 0.7rem;
   }
 
-  .listing-card .card-text b {
-    font-size: 0.95rem;
+  .listing-card .card-img-top {
+    height: 9.5rem;
+  }
+
+  .listing-card .card-body {
+    padding: 0.5rem 0.1rem 0 !important;
+  }
+
+  .listing-title {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .listing-location {
+    font-size: 0.75rem;
+    margin-bottom: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .listing-price {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+  }
+
+  .tax-info {
+    font-size: 0.7rem;
   }
 }
-      
-           
-
     </style>
+
     <div id="filters">
       <div class="filter">
         <div><i class="fa-solid fa-fire"></i></div>
@@ -180,39 +160,48 @@
         </div>
       </div>
     </div>
-    
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
+
+    <% if(search){ %>
+      <p class="text-muted">Showing results for "<b><%= search %></b>" &middot; <a href="/listings" class="text-dark">Clear</a></p>
+    <% } %>
+
+    <% if(!allListings.length){ %>
+      <div class="empty-state">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <h5>No listings found</h5>
+        <p>Try searching for a different destination.</p>
+      </div>
+    <% } %>
+
+    <div class="row row-cols-lg-3 row-cols-2 g-3 g-md-4">
         <% for(let listing of allListings ){ %>
           <a href="/listings/<%= listing._id%>" class="listing-link">
             <div class="card col listing-card">
-              <img src= "<%= listing.image .url%>" 
-                  class="card-img-top" alt="listing_image" 
-                  style="height: 20rem ">
-
-              <div class="card-img-overlay"> </div>
-                <div class="card-body">
-                  <p class="card-text">
-                    <b><%=listing.title%> </b><br>
-                        &#8377; <%= listing.price ?
-                       listing.price.toLocaleString("en-IN") :"N/A" %>/night
-                       <i class="tax-info">&nbsp; &nbsp; +18% GST </i>
-                   </p>
-               </div>
+              <div class="img-wrap">
+                <img src="<%= listing.image.url %>"
+                    class="card-img-top" alt="<%= listing.title %>">
+              </div>
+              <div class="card-body">
+                <p class="listing-title"><%= listing.title %></p>
+                <p class="listing-location">
+                  <%= listing.location %><%= listing.country ? ", " + listing.country : "" %></p>
+                <p class="listing-price">
+                  <b>&#8377; <%= listing.price ?
+                     listing.price.toLocaleString("en-IN") :"N/A" %></b> / night
+                  <span class="tax-info">&nbsp;+18% GST</span>
+                </p>
+              </div>
            </div>
          </a>
         <%}%>
-        </div>
+    </div>
 
 <script>
   let taxSwitch=document.getElementById("flexSwitchCheckDefault");
-  taxSwitch.addEventListener("click" ,() => {
+  taxSwitch.addEventListener("change" ,() => {
     let taxInfo = document.getElementsByClassName("tax-info");
-    for(info of taxInfo){
-      if(info.style.display !="inline"){
-        info.style.display="inline";
-      } else{
-        info.style.display ="none";
-      }
+    for(let info of taxInfo){
+      info.style.display = taxSwitch.checked ? "inline" : "none";
     }
   });
 </script>
